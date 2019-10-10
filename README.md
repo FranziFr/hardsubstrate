@@ -29,3 +29,7 @@ R environments that can be loaded into this code are
 Provides analysis and code for main text Fig. 4.
 R environment that can be loaded into this code is
 100.comp.Fig.RData.
+
+* PBDB_C-S_data.csv
+
+PBDB dataset (download data 15.05.2019) that was used for the analysis. Has to be loaded into all codes!
