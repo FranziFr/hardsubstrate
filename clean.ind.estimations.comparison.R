@@ -30,8 +30,6 @@ L.const <- list(formula=~1)
 ## https://www.paleobiodb.org/data1.2/occs/list.csv?taxon_reso=genus&idqual=certain&interval=Cambrian,Silurian&show=attr,class,genus,ecospace,coll,coords,loc,paleoloc,stratext,lithext,env,geo,acconly
 ## download date 15.05.2019
 genus <- read.csv("PBDB_C-S_data.csv", sep = ",", header=T)
-## filtering only genus-level occurrences (by only filtering for "genus" as accepted rank)
-# genus <- filter(genus, grepl("genus", accepted_rank))
 ## calculating the length of time bins in PBDB
 genus <- cbind(genus, "diff"=genus$max_ma-genus$min_ma)
 

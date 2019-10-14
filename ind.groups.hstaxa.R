@@ -30,8 +30,6 @@ L.const <- list(formula=~1)
 ## https://www.paleobiodb.org/data1.2/occs/list.csv?taxon_reso=genus&idqual=certain&interval=Cambrian,Silurian&show=attr,class,genus,ecospace,coll,coords,loc,paleoloc,stratext,lithext,env,geo,acconly
 ## download date 15.05.2019
 genus <- read.csv("PBDB_C-S_data.csv", sep = ",", header=T)
-## filtering only genus-level occurrences (by only filtering for "genus" as accepted rank)
-# genus <- filter(genus, grepl("genus", accepted_rank))
 ## calculating the length of time bins in PBDB
 genus <- cbind(genus, "diff"=genus$max_ma-genus$min_ma)
 
@@ -270,12 +268,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
-    
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -286,18 +278,8 @@ for (i in 1:100){
     ## possible groups are hard substrate taxa (attached) or free living benthos (n.at - abbr. for non attached)
     ## these assignments are added as an extra column at the end of the observation/non-observation matrix
     ## to assign a genus, we use the genus names that we extracted above, before the loop started
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "attached",
-    #   genus.name %in% Bryozoa.names ~ "attached",
-    #   genus.name %in% Coral.names ~ "attached",
-    #   genus.name %in% Porifera.names ~ "attached",
-    #   genus.name %in% Brachiopoda.names ~ "attached",
-    #   # genus.name %in% rest.Echinos ~ "attached",
-    #   genus.name %in% Trilobita.names ~ "n.at",
-    #   genus.name %in% Mollusca.names ~ "n.at",
-    #   genus.name %in% unattached.names ~ "n.at"
-    #   ))
-    cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
+
+      cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
       genus.name %in% attached.names ~ "Echino",
       genus.name %in% Bryozoa.names ~ "Bryo",
       genus.name %in% Coral.names ~ "Coral",
@@ -364,28 +346,11 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
     names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     
-    
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "attached",
-    #   genus.name %in% Bryozoa.names ~ "attached",
-    #   genus.name %in% Coral.names ~ "attached",
-    #   genus.name %in% Porifera.names ~ "attached",
-    #   genus.name %in% Brachiopoda.names ~ "attached",
-    #   # genus.name %in% rest.Echinos ~ "attached",
-    #   genus.name %in% Trilobita.names ~ "n.at",
-    #   genus.name %in% Mollusca.names ~ "n.at",
-    #   genus.name %in% unattached.names ~ "n.at"
-    # ))
     cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
       genus.name %in% attached.names ~ "Echino",
       genus.name %in% Bryozoa.names ~ "Bryo",
@@ -400,11 +365,6 @@ for (i in 1:100){
     
     summary(cast.gen.cov$cov)
     
-    
-    
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Echino")
     )
@@ -452,11 +412,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -466,17 +421,6 @@ for (i in 1:100){
     ## possible groups are hard substrate taxa (attached) or free living benthos (n.at - abbr. for non attached)
     ## these assignments are added as an extra column at the end of the observation/non-observation matrix
     ## to assign a genus, we use the genus names that we extracted above, before the loop started
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "attached",
-    #   genus.name %in% Bryozoa.names ~ "attached",
-    #   genus.name %in% Coral.names ~ "attached",
-    #   genus.name %in% Porifera.names ~ "attached",
-    #   genus.name %in% Brachiopoda.names ~ "attached",
-    #   # genus.name %in% rest.Echinos ~ "attached",
-    #   genus.name %in% Trilobita.names ~ "n.at",
-    #   genus.name %in% Mollusca.names ~ "n.at",
-    #   genus.name %in% unattached.names ~ "n.at"
-    #   ))
     cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
       genus.name %in% attached.names ~ "Echino",
       genus.name %in% Bryozoa.names ~ "Bryo",
@@ -541,28 +485,12 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
     names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     
     
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "attached",
-    #   genus.name %in% Bryozoa.names ~ "attached",
-    #   genus.name %in% Coral.names ~ "attached",
-    #   genus.name %in% Porifera.names ~ "attached",
-    #   genus.name %in% Brachiopoda.names ~ "attached",
-    #   # genus.name %in% rest.Echinos ~ "attached",
-    #   genus.name %in% Trilobita.names ~ "n.at",
-    #   genus.name %in% Mollusca.names ~ "n.at",
-    #   genus.name %in% unattached.names ~ "n.at"
-    # ))
     cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
       genus.name %in% attached.names ~ "Echino",
       genus.name %in% Bryozoa.names ~ "Bryo",
@@ -576,12 +504,7 @@ for (i in 1:100){
     ))
     
     summary(cast.gen.cov$cov)
-    
-    
-    
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
+
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Bryo")
     )
@@ -630,11 +553,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -645,17 +563,6 @@ for (i in 1:100){
     ## possible groups are hard substrate taxa (attached) or free living benthos (n.at - abbr. for non attached)
     ## these assignments are added as an extra column at the end of the observation/non-observation matrix
     ## to assign a genus, we use the genus names that we extracted above, before the loop started
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "attached",
-    #   genus.name %in% Bryozoa.names ~ "attached",
-    #   genus.name %in% Coral.names ~ "attached",
-    #   genus.name %in% Porifera.names ~ "attached",
-    #   genus.name %in% Brachiopoda.names ~ "attached",
-    #   # genus.name %in% rest.Echinos ~ "attached",
-    #   genus.name %in% Trilobita.names ~ "n.at",
-    #   genus.name %in% Mollusca.names ~ "n.at",
-    #   genus.name %in% unattached.names ~ "n.at"
-    #   ))
     cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
       genus.name %in% attached.names ~ "Echino",
       genus.name %in% Bryozoa.names ~ "Bryo",
@@ -720,28 +627,12 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
     names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     
     
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "attached",
-    #   genus.name %in% Bryozoa.names ~ "attached",
-    #   genus.name %in% Coral.names ~ "attached",
-    #   genus.name %in% Porifera.names ~ "attached",
-    #   genus.name %in% Brachiopoda.names ~ "attached",
-    #   # genus.name %in% rest.Echinos ~ "attached",
-    #   genus.name %in% Trilobita.names ~ "n.at",
-    #   genus.name %in% Mollusca.names ~ "n.at",
-    #   genus.name %in% unattached.names ~ "n.at"
-    # ))
     cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
       genus.name %in% attached.names ~ "Echino",
       genus.name %in% Bryozoa.names ~ "Bryo",
@@ -757,10 +648,6 @@ for (i in 1:100){
     summary(cast.gen.cov$cov)
     
     
-    
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Pori")
     )
@@ -808,11 +695,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -823,17 +705,6 @@ for (i in 1:100){
     ## possible groups are hard substrate taxa (attached) or free living benthos (n.at - abbr. for non attached)
     ## these assignments are added as an extra column at the end of the observation/non-observation matrix
     ## to assign a genus, we use the genus names that we extracted above, before the loop started
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "attached",
-    #   genus.name %in% Bryozoa.names ~ "attached",
-    #   genus.name %in% Coral.names ~ "attached",
-    #   genus.name %in% Porifera.names ~ "attached",
-    #   genus.name %in% Brachiopoda.names ~ "attached",
-    #   # genus.name %in% rest.Echinos ~ "attached",
-    #   genus.name %in% Trilobita.names ~ "n.at",
-    #   genus.name %in% Mollusca.names ~ "n.at",
-    #   genus.name %in% unattached.names ~ "n.at"
-    #   ))
     cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
       genus.name %in% attached.names ~ "Echino",
       genus.name %in% Bryozoa.names ~ "Bryo",
@@ -898,28 +769,12 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
     names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     
     
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "attached",
-    #   genus.name %in% Bryozoa.names ~ "attached",
-    #   genus.name %in% Coral.names ~ "attached",
-    #   genus.name %in% Porifera.names ~ "attached",
-    #   genus.name %in% Brachiopoda.names ~ "attached",
-    #   # genus.name %in% rest.Echinos ~ "attached",
-    #   genus.name %in% Trilobita.names ~ "n.at",
-    #   genus.name %in% Mollusca.names ~ "n.at",
-    #   genus.name %in% unattached.names ~ "n.at"
-    # ))
     cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
       genus.name %in% attached.names ~ "Echino",
       genus.name %in% Bryozoa.names ~ "Bryo",
