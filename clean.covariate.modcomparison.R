@@ -228,6 +228,7 @@ Mollusca <- genus %>% filter(
 Mollusca.names <- unique(Mollusca[,'genus'])
 
 
+## activate the following section if amount of genera that are not considered in the analysis is supposed to be calculated
 # rest.Echinos <- genus %>% filter(
 #   phylum %in% "Echinodermata"
 # ) %>% filter(
@@ -318,7 +319,7 @@ cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
   genus.name %in% unattached.names ~ "n.at"
 ))
 
-
+## run the following section only if amount of genera (Tab. S1) should be calculated 
 # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
 #   genus.name %in% attached.names ~ "att.Echino",
 #   genus.name %in% Bryozoa.names ~ "Bryozoa",
@@ -349,8 +350,8 @@ inp1 <- cbind.data.frame(ifelse(inp1[,2:12] >=1, 1, 0),
                          "cov"=inp1[,13])
 
 
-# ##
-# ##
+## the following sections calculated the amount of observations, presences (Tab. S2) per group. 
+## run after the section right above for the calculation of genera per group was executed
 # inp1 <- cast.gen.cov %>% filter(
 #   cov %in% c(
 #     # "att.Echino"
@@ -409,6 +410,8 @@ L.cov <- list(formula=~cov)
 #######################################################
 
 proc.pradsen <- process.data(inp1, model= "Pradsen", groups = "cov")#Pradel's survival and "growth"
+
+## running models for model comparison
 Time.cov <- mark(proc.pradsen, model.parameters = list(Phi=Phi.Time.cov, p=p.Time.cov, Gamma=L.Time.cov))#, options="SIMANNEAL")
 
 time.cov <- mark(proc.pradsen, model.parameters = list(Phi=Phi.time.cov, p=p.time.cov, Gamma=L.time.cov))#, options="SIMANNEAL")
@@ -434,21 +437,19 @@ Phi.t.p.t.gamma.t1 <- mark(proc.pradsen, model.parameters = list(Phi=Phi.time.co
 Phi.t.p.t1.gamma.t <- mark(proc.pradsen, model.parameters = list(Phi=Phi.time.cov, p=p.time, Gamma=L.time.cov))#, options="SIMANNEAL")
 Phi.t1.p.t.gamma.t <- mark(proc.pradsen, model.parameters = list(Phi=Phi.time, p=p.time.cov, Gamma=L.time.cov))#, options="SIMANNEAL")
 
-
-
 time.1 <- mark(proc.pradsen, model.parameters = list(Phi=Phi.time, p=p.time, Gamma=L.time))
 const.cov <- mark(proc.pradsen, model.parameters = list(Phi=Phi.cov, p=p.cov, Gamma=L.cov))
 const.1 <- mark(proc.pradsen, model.parameters = list(Phi=Phi.const, p=p.const, Gamma=L.const))
 
+## the following command collects the models that were just run and compares them based on AICc
 x=collect.models(type = "Pradsen")
 
   }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
   
-
+## here, we extract the model comparison results and estimates from the best model as a list from all 100 replicate runs
   reruns.modelcomparison[[i]]=data.frame(x$model.table$model,x$model.table$weight)
   reruns.Phi.T.Gamma.t.p.T[[i]]=Phi.T.Gamma.t.p.T$results$real
-  reruns.Time.cov[[i]]=Time.cov$results$real
-  
+
   
 }
 
@@ -473,8 +474,6 @@ AIC.median$AIC.median <- round(AIC.median$AIC.median,3)
 model.weights.100 <- full_join(AIC.mean, AIC.median, by="x.model.table.model")
 model.weights.100
 
-
-# AIC.table[c(1,101)]
 #####################################################################################################
 #####################################################################################################
 
@@ -482,7 +481,6 @@ model.weights.100
 estimates <- do.call(cbind, lapply(reruns.Phi.T.Gamma.t.p.T, function(x) x$estimate))
 lcl <- do.call(cbind, lapply(reruns.Phi.T.Gamma.t.p.T, function(x) x$lcl))
 ucl <- do.call(cbind, lapply(reruns.Phi.T.Gamma.t.p.T, function(x) x$ucl))
-
 
 estimates[estimates<0.00001|estimates==1|estimates>=1] <- NA
 lcl[is.na(estimates)] <- NA
@@ -528,152 +526,13 @@ gam.median.n.at <- estimates.median[54:60]
 gamu.median.n.at <- ucl.median[54:60]
 gaml.median.n.at <- lcl.median[54:60]
 
-
-## extracting parameter estimates from results and results.lambda
-# phi.c1 <- Time.cov$results$real$estimate[2:8]
-# phiu.c1 <- Time.cov$results$real$ucl[2:8]
-# phil.c1 <- Time.cov$results$real$lcl[2:8]
-# 
-# phi.c2 <- Time.cov$results$real$estimate[12:18]
-# phiu.c2 <- Time.cov$results$real$ucl[12:18]
-# phil.c2 <- Time.cov$results$real$lcl[12:18]
-# 
-# p.c1 <- Time.cov$results$real$estimate[23:29]
-# pu.c1 <- Time.cov$results$real$ucl[23:29]
-# pl.c1 <- Time.cov$results$real$lcl[23:29]
-# 
-# p.c2 <- Time.cov$results$real$estimate[34:40]
-# pu.c2 <- Time.cov$results$real$ucl[34:40]
-# pl.c2 <- Time.cov$results$real$lcl[34:40]
-# 
-# gam.c1 <- Time.cov$results$real$estimate[44:50]
-# gamu.c1 <- Time.cov$results$real$ucl[44:50]
-# gaml.c1 <- Time.cov$results$real$lcl[44:50]
-# 
-# gam.c2 <- Time.cov$results$real$estimate[54:60]
-# gamu.c2 <- Time.cov$results$real$ucl[54:60]
-# gaml.c2 <- Time.cov$results$real$lcl[54:60]
-# 
-# div.c1 <- TimeD.cov$results$real$estimate[44:50]
-# divu.c1 <- TimeD.cov$results$real$ucl[44:50]
-# divl.c1 <- TimeD.cov$results$real$lcl[44:50]
-# 
-# div.c2 <- TimeD.cov$results$real$estimate[54:60]
-# divu.c2 <- TimeD.cov$results$real$ucl[54:60]
-# divl.c2 <- TimeD.cov$results$real$lcl[54:60]
-# 
-# ##
-# ##
-# ##
-# ##
-# ## if preferred is: phi t - gamma T.cov - p T.cov
-# phi.c1 <- Phi.t1.p.T.gamma.T$results$real$estimate[2:8]
-# phiu.c1 <- Phi.t1.p.T.gamma.T$results$real$ucl[2:8]
-# phil.c1 <- Phi.t1.p.T.gamma.T$results$real$lcl[2:8]
-# 
-# phi.c2 <- Phi.t1.p.T.gamma.T$results$real$estimate[2:8]
-# phiu.c2 <- Phi.t1.p.T.gamma.T$results$real$ucl[2:8]
-# phil.c2 <- Phi.t1.p.T.gamma.T$results$real$lcl[2:8]
-# 
-# p.c1 <- Phi.t1.p.T.gamma.T$results$real$estimate[13:19]
-# pu.c1 <- Phi.t1.p.T.gamma.T$results$real$ucl[13:19]
-# pl.c1 <- Phi.t1.p.T.gamma.T$results$real$lcl[13:19]
-# 
-# p.c2 <- Phi.t1.p.T.gamma.T$results$real$estimate[24:30]
-# pu.c2 <- Phi.t1.p.T.gamma.T$results$real$ucl[24:30]
-# pl.c2 <- Phi.t1.p.T.gamma.T$results$real$lcl[24:30]
-# 
-# gam.c1 <- Phi.t1.p.T.gamma.T$results$real$estimate[34:40]
-# gamu.c1 <- Phi.t1.p.T.gamma.T$results$real$ucl[34:40]
-# gaml.c1 <- Phi.t1.p.T.gamma.T$results$real$lcl[34:40]
-# 
-# gam.c2 <- Phi.t1.p.T.gamma.T$results$real$estimate[44:50]
-# gamu.c2 <- Phi.t1.p.T.gamma.T$results$real$ucl[44:50]
-# gaml.c2 <- Phi.t1.p.T.gamma.T$results$real$lcl[44:50]
-# 
-# div.c1 <- TimeD.cov$results$real$estimate[44:50]
-# divu.c1 <- TimeD.cov$results$real$ucl[44:50]
-# divl.c1 <- TimeD.cov$results$real$lcl[44:50]
-# 
-# div.c2 <- TimeD.cov$results$real$estimate[54:60]
-# divu.c2 <- TimeD.cov$results$real$ucl[54:60]
-# divl.c2 <- TimeD.cov$results$real$lcl[54:60]
-# 
-##
-##
-# ##
-# ## if preferred is Phi T - p T - gamma t
-# phi.c1 <- Phi.T.Gamma.t.p.T$results$real$estimate[2:8]
-# phiu.c1 <- Phi.T.Gamma.t.p.T$results$real$ucl[2:8]
-# phil.c1 <- Phi.T.Gamma.t.p.T$results$real$lcl[2:8]
-# 
-# phi.c2 <- Phi.T.Gamma.t.p.T$results$real$estimate[12:18]
-# phiu.c2 <- Phi.T.Gamma.t.p.T$results$real$ucl[12:18]
-# phil.c2 <- Phi.T.Gamma.t.p.T$results$real$lcl[12:18]
-# 
-# p.c1 <- Phi.T.Gamma.t.p.T$results$real$estimate[23:29]
-# pu.c1 <- Phi.T.Gamma.t.p.T$results$real$ucl[23:29]
-# pl.c1 <- Phi.T.Gamma.t.p.T$results$real$lcl[23:29]
-# 
-# p.c2 <- Phi.T.Gamma.t.p.T$results$real$estimate[34:40]
-# pu.c2 <- Phi.T.Gamma.t.p.T$results$real$ucl[34:40]
-# pl.c2 <- Phi.T.Gamma.t.p.T$results$real$lcl[34:40]
-# 
-# gam.c1 <- Phi.T.Gamma.t.p.T$results$real$estimate[44:50]
-# gamu.c1 <- Phi.T.Gamma.t.p.T$results$real$ucl[44:50]
-# gaml.c1 <- Phi.T.Gamma.t.p.T$results$real$lcl[44:50]
-# 
-# gam.c2 <- Phi.T.Gamma.t.p.T$results$real$estimate[54:60]
-# gamu.c2 <- Phi.T.Gamma.t.p.T$results$real$ucl[54:60]
-# gaml.c2 <- Phi.T.Gamma.t.p.T$results$real$lcl[54:60]
-
-
 ###########################################################################################
 # following vector is time between midpoints of two neighbouring stageslices
 t <- c(9.65,7.7,5.2,5.8,7.15,6.6,4.6)
 # following vector is time per interval/stageslice
 tp <- c(7.7,7.7,2.7,8.9,5.4,7.8,1.4)
 
-
 ###########################################################################################
-## transformation of mean parameter estimates into rates
-# origprob.c1 <- 1-gam.c1
-# origCIl.c1 <- 1-gaml.c1
-# origCIu.c1 <- 1-gamu.c1
-# Orig_rate.c1 <- -log(1-origprob.c1)/t
-# Orig_rate_CIl.c1 <- -log(1-origCIl.c1)/t
-# Orig_rate_CIu.c1 <- -log(1-origCIu.c1)/t
-# 
-# origprob.c2 <- 1-gam.c2
-# origCIl.c2 <- 1-gaml.c2
-# origCIu.c2 <- 1-gamu.c2
-# Orig_rate.c2 <- -log(1-origprob.c2)/t
-# Orig_rate_CIl.c2 <- -log(1-origCIl.c2)/t
-# Orig_rate_CIu.c2 <- -log(1-origCIu.c2)/t
-# 
-# 
-# extinctprob.c1 <- 1-phi.c1
-# extinctCIl.c1 <- 1-phil.c1
-# extinctCIu.c1 <- 1-phiu.c1
-# Ext_rate.c1 <- -log(1-extinctprob.c1)/t
-# Ext_rate_CIl.c1 <- -log(1-extinctCIl.c1)/t
-# Ext_rate_CIu.c1 <- -log(1-extinctCIu.c1)/t
-# 
-# extinctprob.c2 <- 1-phi.c2
-# extinctCIl.c2 <- 1-phil.c2
-# extinctCIu.c2 <- 1-phiu.c2
-# Ext_rate.c2 <- -log(1-extinctprob.c2)/t
-# Ext_rate_CIl.c2 <- -log(1-extinctCIl.c2)/t
-# Ext_rate_CIu.c2 <- -log(1-extinctCIu.c2)/t
-# 
-# 
-# rate_p.c1 <- -log(1-p.c1)/tp
-# ratel_p.c1 <- -log(1-pl.c1)/tp
-# rateu_p.c1 <- -log(1-pu.c1)/tp
-# 
-# rate_p.c2 <- -log(1-p.c2)/tp
-# ratel_p.c2 <- -log(1-pl.c2)/tp
-# rateu_p.c2 <- -log(1-pu.c2)/tp
 origprob.median.att <- 1-gam.median.att
 origCIl.median.att <- 1-gaml.median.att
 origCIu.median.att <- 1-gamu.median.att
@@ -716,7 +575,6 @@ rateu_p.median.n.at <- -log(1-pu.median.n.at)/tp
 #########################################################################################################
 #########################################################################################################
 
-
 Stagebase <-c(485.4,477.7,470,467.3,458.4,453,445.2)
 Stagemidpoints <- c(481.55,473.85,468.65,462.85,455.7,449.1,444.5)
 
@@ -746,71 +604,6 @@ tscales.Ord <- function(top, bot, s.bot, ...){
 }
 
 
-# tiff("AnthBryo.pmod2.tiff",
-#      res = 300,
-#      units = "cm",
-#      width = 15,
-#      height = 8,
-#      pointsize = 8)
-
-# tiff("BryoPori.pmod.tiff",
-#      res = 300,
-#      units = "cm",
-#      width = 15,
-#      height = 8,
-#      pointsize = 8)
-
-# tiff("BryoEchino.pmod.tiff",
-#      res = 300,
-#      units = "cm",
-#      width = 15,
-#      height = 8,
-#      pointsize = 8)
-
-
-# tiff("CephTrilo.tiff",
-#       res = 300,
-#       units = "cm",
-#       width = 15,
-#       height = 8,
-#       pointsize = 8)
-# 
-# tiff("BC.vs.Echinos.tiff",
-#       res = 300,
-#       units = "cm",
-#       width = 15,
-#       height = 8,
-#       pointsize = 8)
-# 
-# tiff("HemiPori.tiff",
-#      res = 300,
-#      units = "cm",
-#      width = 15,
-#      height = 8,
-#      pointsize = 8)
-# 
-# 
-# tiff("E.att.unatt.tiff",
-#      res = 300,
-#      units = "cm",
-#      width = 15,
-#      height = 8,
-#      pointsize = 8)
-# 
-# tiff("E.att.allother.tiff",
-#      res = 300,
-#      units = "cm",
-#      width = 15,
-#      height = 8,
-#      pointsize = 8)
-# 
-# tiff("att.unatt.tiff",
-#      res = 300,
-#      units = "cm",
-#      width = 15,
-#      height = 8,
-#      pointsize = 8)
-# 
 tiff("prefmod.tiff",
      res = 300,
      units = "cm",
@@ -938,136 +731,3 @@ mtext("Age (Ma)", side = 1, line = 2.2)
 mtext("Sampling events per myr", side = 2, line = 2)
 
 dev.off()
-
-
-
-
-
-
-
-
-
-
-
-
-# ##############################################################################
-# plot(Stagebase-0.3, Orig_rate.c1, type = "b", 
-#      pch=19,
-#      # main = "Origination Rate", 
-#      ylim = c(-0.1,0.6),
-#      xlim = rev(c(443.8,485)),
-#      axes = F,
-#      xlab = "",
-#      ylab = "")
-# 
-# tscales.Ord(0.6, -0.02, -0.1)
-# 
-# lines(Stagebase-0.3, Orig_rate.c1, type = "b", pch=19, lwd=1, lty=2)
-# # lines(Stagebase[1]-1, Orig_rate.c1[1]-0.02, type = "b", pch="1")
-# arrows(x0=Stagebase-0.3, y0=Orig_rate_CIl.c1, x1=Stagebase-0.3, y1=Orig_rate_CIu.c1, length=0.02, lwd = 1, angle = 90, code = 3, lty=2)
-# 
-# lines(Stagebase-0.2, Orig_rate.c2, type = "b", lty = 1, pch=19,lwd=1)
-# # lines(Stagebase[1]-1, Orig_rate.c2[1]-0.02, type = "b", pch="2")
-# arrows(x0=Stagebase-0.2, y0=Orig_rate_CIl.c2, x1=Stagebase-0.2, y1=Orig_rate_CIu.c2, length=0.02, lwd = 1, lty=1, angle = 90, code = 3)
-# 
-# 
-# legend("topleft", legend="A", bty="n", cex = 1.25)
-# 
-# axis(2, col = 'grey75', line = -0.2, at = seq(0, 0.6, 0.1))
-# 
-# mtext("Origination events per myr", side = 2, line = 2)
-# 
-# # axis(1, col = 'grey75', line = 0.15, at = seq(445,485,10))
-# # mtext("Age (Ma)", side = 1, line = 2)
-# 
-# legend("topright", legend=c("hard substrate N=496","other benthos N=1506"), lty=c(2,1))
-# 
-# 
-# ##############################################################################
-# ## Extinction Rate
-# plot(Stagebase-0.2, Ext_rate.c1, type = "b",
-#      pch=19,
-#      # main = "Extinction Rate", 
-#      ylim = c(-0.05,0.25),
-#      xlim = rev(c(444.18,485.4)),
-#      axes = F,
-#      xlab = "",
-#      ylab = "")
-# 
-# tscales.Ord(0.25, -0.02, -0.05)
-# 
-# lines(Stagebase-0.3, Ext_rate.c1, type = "b", pch=19, lwd=1, lty=2)
-# arrows(x0=Stagebase-0.3, y0=Ext_rate_CIl.c1, x1=Stagebase-0.3, y1=Ext_rate_CIu.c1, length=0.02, lwd = 1, angle = 90, code = 3, lty=2)
-# 
-# lines(Stagebase-0.2, Ext_rate.c2, type = "b", lty = 1, lwd=1, pch=19)
-# arrows(x0=Stagebase-0.2, y0=Ext_rate_CIl.c2, x1=Stagebase-0.2, y1=Ext_rate_CIu.c2, length=0.02, lwd = 1,lty=1,  angle = 90, code = 3)
-# 
-# legend("topleft", legend="B", bty="n", cex = 1.25)
-# 
-# axis(2, col = 'grey75', line = -0.2, at = seq(0, 0.25, 0.1))
-# 
-# mtext("Extinction events per myr", side = 2, line = 2)
-# 
-# 
-# 
-# 
-# ##############################################################################
-# # ## net diversification 
-# # plot(Stagebase-0.3, div.c1-1, type = "b", 
-# #      # main = "Net Diversification", 
-# #      ylim = c(-2,8),
-# #      xlim = rev(c(444.18,485.4)),
-# #      axes = F,
-# #      xlab = "",
-# #      ylab = "")
-# # 
-# # tscales.Ord(8, -1.2, -2)
-# # abline(h = 0, col="darkgrey")
-# # 
-# # lines(Stagebase-0.3, div.c1-1, type = "b", lwd=0.8, pch=19, lty=2)
-# # arrows(x0=Stagebase-0.3, y0=divl.c1-1, x1=Stagebase-0.3, y1=divu.c1-1, length=0.02, lwd = 1, angle = 90, code = 3, lty=2)
-# # 
-# # lines(Stagebase-0.2, div.c2-1, type = "b", lty = 1, pch=19, lwd=1)
-# # arrows(x0=Stagebase-0.2, y0=divl.c2-1, x1=Stagebase-0.2, y1=divu.c2-1, length=0.02, lwd = 1, lty=1,  angle = 90, code = 3)
-# # 
-# # legend("topleft", legend="C", bty="n", cex = 1.25)
-# # 
-# # axis(1, col = 'grey75', line = 0.15, at = seq(445,485,10))
-# # axis(2, col = 'grey75', line = -0.2, at = seq(-1, 8, 1))
-# # 
-# # mtext("Age (Ma)", side = 1, line = 2.2)
-# # mtext("Net diversification rate", side = 2, line = 2)
-# 
-# ##############################################################################
-# ## Sampling rate
-# plot(Stagemidpoints-0.1, rate_p.c1, type = 'b', 
-#      # main="Sampling Rate",
-#      xlim = rev(c(444.18,485.4)),
-#      ylim = c(-0.11,1),
-#      axes = F,
-#      xlab = "", ylab = "")
-# 
-# tscales.Ord(1, -0.02, -0.11)
-# 
-# lines(Stagemidpoints-0.3, rate_p.c1, type = "b", pch=19,lwd=1, lty=2)
-# arrows(x0=Stagemidpoints-0.3, y0=ratel_p.c1, x1=Stagemidpoints-0.3, y1=rateu_p.c1, length=0.02, lwd = 1, angle = 90, code = 3, lty=2)
-# 
-# lines(Stagemidpoints-0.2, rate_p.c2, type = "b" , lty = 1, lwd=1, pch=19)
-# arrows(x0=Stagemidpoints-0.2, y0=ratel_p.c2, x1=Stagemidpoints-0.2, y1=rateu_p.c2, length=0.02, lwd = 1, lty=1, angle = 90, code = 3)
-# 
-# legend("topleft", legend="C", bty="n", cex = 1.25)
-# 
-# axis(1, col = 'grey75', line = 0.15, at = seq(445,485,10))
-# axis(2, col = 'grey75', line = -0.15, at = seq(0, 1, 0.2))
-# 
-# mtext("Age (Ma)", side = 1, line = 2.2)
-# mtext("Sampling events per myr", side = 2, line = 2)
-# 
-# dev.off()
-
-# summary(cast.cov.class$class)
-# sort(summary(cast.ec$class))
-# 
-# sort(summary(cast.n.ec$class))
-
-
