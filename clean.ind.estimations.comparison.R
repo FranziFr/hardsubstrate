@@ -244,86 +244,6 @@ Mollusca <- genus %>% filter(
 )
 Mollusca.names <- unique(Mollusca[,'genus'])
 
-# 
-# Mollusca <- genus.age %>% filter(
-#   phylum %in% "Mollusca"
-# ) %>%
-#   filter(order %in% c("Euomphalina","Cyrtodontida",
-#                       "Modiomorphida","Murchisoniina",
-#                       "Myalinida","Bellerophontida",
-#                       "Solemyida","Nuculida",
-#                       "Nuculanida", "Helcionellida",
-#                       "Pholadomyida", "Pelagiellida",
-#                       "Sachitida", "Cyrtonellida",
-#                       "Carditida", "Archinacellida",
-#                       "Ribeirioida", " Arcida",
-#                       "Tryblidiida","Megalodontida",
-#                       "Pectinida","Solenida",
-#                       "Cambridioida", "Lucinida",
-#                       "Pterioida", "Actinodontida",
-#                       "Hypseloconida", "Conocardiida",
-#                       "Mytilida", "Neoloricata",
-#                       "Fordillida", "Hippuritida",
-#                       "Calyptoptomatida", "Cyrtoneritimorpha",
-#                       "Neogastropoda", "Trigoniida",
-#                       "Afghanodesmatida","Colpomyida",
-#                       "Dentaliida","Neritoina",
-#                       "Solemyoida", "Veneroidei"))
-# ## Ostreida -- oysters
-# ## Cornulitida  -- encrusting animal from Tentaculita (wikipedia)
-# ## Volynitida -- Tentaculita --> not sure whether encrusting or not
-# ## Nowakiida -- Tentaculita --> not sure whether encrusting or not
-# ## Styliolinida same as above
-# Mollusca.names <- unique(Mollusca[,'genus'])
-
-# Cephalopoda <- genus.age %>% filter(
-#   phylum %in% "Mollusca") %>%
-#   filter (class %in% "Cephalopoda")
-# Cephalopoda.names <- unique(Cephalopoda[,'accepted_name'])
-
-# Cnidaria <- genus.age %>% filter(
-#   phylum %in% "Cnidaria"
-# ) %>% filter(
-#   !class %in% "Anthozoa")
-
-# unattached <- genus.age %>% filter(
-#   phylum %in% "Echinodermata"
-# ) %>% filter(
-#   !accepted_name %in% attached.names
-# )
-# unattached.names <- unique(unattached[,'accepted_name'])
-
-
-
-# # opposite of intersect
-# outersect <- function(x, y, ...) {
-#   big.vec <- c(x, y, ...)
-#   duplicates <- big.vec[duplicated(big.vec)]
-#   setdiff(big.vec, unique(duplicates))
-# }
-# 
-# 
-# unis <- outersect(as.character(Bryozoa.names),
-#                   as.character(Coral.names),
-#                   as.character(Porifera.names),
-#                   as.character(attached.names),
-#                   as.character(unattached.names),
-#                   as.character(Brachiopoda.craniids.names))
-# 
-# ll <- map(list(Bryozoa.names,
-#                Coral.names,
-#                Porifera.names,
-#                attached.names,
-#                unattached.names,
-#                Brachiopoda.craniids.names),
-#           ~ .x[.x %in% unis])
-# 
-# Bryozoa.names <- ll[[1]]
-# Coral.names <- ll[[2]]
-# Porifera.names <- ll[[3]]
-# attached.names <- ll[[4]]
-# unattached.names <- ll[[5]]
-# Brachiopoda.craniids.names <- ll[[6]]
 
 rest.Echinos <- genus %>% filter(
   phylum %in% "Echinodermata"
@@ -361,12 +281,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
-    
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -388,18 +302,7 @@ for (i in 1:100){
       genus.name %in% Mollusca.names ~ "n.at",
       genus.name %in% unattached.names ~ "n.at"
       ))
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "Echino",
-    #   genus.name %in% Bryozoa.names ~ "Bryo",
-    #   genus.name %in% Coral.names ~ "Coral",
-    #   genus.name %in% Porifera.names ~ "Pori",
-    #   genus.name %in% Brachiopoda.names ~ "Brachio"
-    #   genus.name %in% rest.Echinos ~ "attached",
-    #   genus.name %in% Trilobita.names ~ "n.at",
-    #   genus.name %in% Mollusca.names ~ "n.at",
-    #   genus.name %in% unattached.names ~ "n.at"
-    # ))
-    
+
     cast.gen.cov$cov <- as.factor(cast.gen.cov$cov)
     
     summary(cast.gen.cov$cov)
@@ -455,11 +358,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -477,25 +375,10 @@ for (i in 1:100){
       genus.name %in% Mollusca.names ~ "n.at",
       genus.name %in% unattached.names ~ "n.at"
     ))
-    # cast.gen.cov <- cast_genus %>% mutate(cov=case_when(
-    #   genus.name %in% attached.names ~ "Echino",
-    #   genus.name %in% Bryozoa.names ~ "Bryo",
-    #   genus.name %in% Coral.names ~ "Coral",
-    #   genus.name %in% Porifera.names ~ "Pori",
-    #   genus.name %in% Brachiopoda.names ~ "Brachio"
-      # genus.name %in% rest.Echinos ~ "attached",
-      # genus.name %in% Trilobita.names ~ "n.at",
-      # genus.name %in% Mollusca.names ~ "n.at",
-      # genus.name %in% unattached.names ~ "n.at"
-    # ))
-    
+
     summary(cast.gen.cov$cov)
     
     
-
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("attached")
     )
@@ -617,18 +500,6 @@ lambda.median <- estimates.lambda.median[23:29]
 lambdau.median <- ucl.lambda.median[23:29]
 lambdal.median <- lcl.lambda.median[23:29]
 
-# phi <- time.1$results$real$estimate[2:8]
-# phiu <- time.1$results$real$ucl[2:8]
-# phil <- time.1$results$real$lcl[2:8]
-# 
-# p <- time.1$results$real$estimate[13:19]
-# pu <- time.1$results$real$ucl[13:19]
-# pl <- time.1$results$real$lcl[13:19]
-# 
-# gam <- time.1$results$real$estimate[23:29]
-# gamu <- time.1$results$real$ucl[23:29]
-# gaml <- time.1$results$real$lcl[23:29]
-
 t <- c(9.65,7.7,5.2,5.8,7.15,6.6,4.6)
 # following vector is time per interval/stageslice
 tp <- c(7.7,7.7,2.7,8.9,5.4,7.8,1.4)
@@ -698,11 +569,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -772,11 +638,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -976,7 +837,6 @@ save.image("//kant/nhm-sfs-u2/franzif/paper2/100.repruns.median.minusParacrinoid
 
 
 load("//kant/nhm-sfs-u2/franzif/paper2/100.repruns.median.minusParacrinoids.RData")
-
 
 
 
@@ -1232,11 +1092,8 @@ dev.off()
  
 
 
-
-
-
-
-
+### Supplement information
+## Template for Fig. S1 and Fig. S3 (depending on Paracrinoids were in- or excluded)
 tiff("att.fl.rep100.minusParacrinoidea.tiff",
      res = 600,
      units = "mm",
@@ -1267,21 +1124,11 @@ for (i in 1:100){
 for (i in 1:100){
   lines(Stagebase, Orig_rate[1:7,i], col = "black")}
 
-# text(Stagebase[2], 0.9, labels = "Anthozoans")
-# text(Stagemidpoints[2], 0.9, labels = "Bryozoans")
-# text(Stagemidpoints[2], 0.9, labels = "Echinodermata")
-# text(Stagemidpoints[2], 0.9, labels = "Poriferans")
-# text(Stagemidpoints[2], 0.9, labels = "attaching E.")
-# text(Stagemidpoints[2], 0.9, labels = "hard substrate taxa")
-
 legend("topright",
        inset=0.05,
        box.lty=0,
        text.font=2,
        legend="hard substrate taxa")
-# lines(Stagemidpoints,mean.N.B[3:9],type="b", lwd=1.5, pch=19)
-# lines(Stagemidpoints,mean.N.L[3:9],type="b", lwd=1.5, pch=17, lty=2)
-
 
 # axis(1, col = 'grey75', line = 0.5, at = seq(445,485,10) )
 axis(2, col = 'grey75', line = -0.2, at = seq(0, 0.5, 0.1))
@@ -1312,7 +1159,6 @@ for (i in 1:100){
 for (i in 1:100){
   lines(Stagebase, Orig_rate.ob[1:7,i], col = "black")}
 
-# text(Stagemidpoints[2], 0.9, labels = "free living taxa")
 legend("topright",
        inset=0.05,
        box.lty=0,
@@ -1345,11 +1191,6 @@ for (i in 1:100){
 
 for (i in 1:100){
   lines(Stagebase, Ext_rate[1:7,i], col = "black")}
-
-
-# lines(Stagemidpoints,mean.N.B[3:9],type="b", lwd=1.5, pch=19)
-# lines(Stagemidpoints,mean.N.L[3:9],type="b", lwd=1.5, pch=17, lty=2)
-
 
 axis(2, col = 'grey75', line = -0.2, at = seq(0, 0.5, 0.1))
 
@@ -1406,8 +1247,6 @@ for (i in 1:100){
 for (i in 1:100){
   lines(Stagebase, lambda[1:7,i]-1, col = "black")}
 
-# legend("topleft", legend="C", bty="n", cex = 1.25)
-
 axis(2, col = 'grey75', line = -0.2, at = seq(-1, 8, 1))
 
 mtext("Net diversification rate", side = 2, line = 2)
@@ -1462,10 +1301,6 @@ for (i in 1:100){
 
 for (i in 1:100){
   lines(Stagemidpoints, rate_p[1:7,i], col = "black")}
-
-# lines(Stagemidpoints,mean.N.B[3:9],type="b", lwd=1.5, pch=19)
-# lines(Stagemidpoints,mean.N.L[3:9],type="b", lwd=1.5, pch=17, lty=2)
-
 
 axis(1, col = 'grey75', line = 0.1, at = seq(445,485,10))
 axis(2, col = 'grey75', line = -0.2, at = seq(0, 1, 0.2))
