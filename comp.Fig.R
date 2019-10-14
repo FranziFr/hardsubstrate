@@ -36,8 +36,6 @@ tp <- c(7.7,7.7,2.7,8.9,5.4,7.8,1.4)
 ## https://www.paleobiodb.org/data1.2/occs/list.csv?taxon_reso=genus&idqual=certain&interval=Cambrian,Silurian&show=attr,class,genus,ecospace,coll,coords,loc,paleoloc,stratext,lithext,env,geo,acconly
 ## download date 15.05.2019
 genus <- read.csv("PBDB_C-S_data.csv", sep = ",", header=T)
-## filtering only genus-level occurrences (by only filtering for "genus" as accepted rank)
-# genus <- filter(genus, grepl("genus", accepted_rank))
 ## calculating the length of time bins in PBDB
 genus <- cbind(genus, "diff"=genus$max_ma-genus$min_ma)
 
@@ -211,20 +209,6 @@ Porifera.b <- genus %>% filter(
 Porifera <- rbind.data.frame(Porifera.a, Porifera.b)
 Porifera.names <- unique(Porifera[,'genus'])
 
-# Brachiopoda.craniids <- genus %>% filter(
-#   phylum %in% "Brachiopoda"
-# ) %>% filter(
-#   order %in% "Craniida"
-# )
-# 
-# Brachiopoda.discinids <- genus %>% filter(
-#   phylum %in% "Brachiopoda"
-# ) %>% filter(
-#   family %in% "Discinidae"
-# )
-# Brachiopoda <- rbind.data.frame(Brachiopoda.craniids,Brachiopoda.discinids)
-# Brachiopoda.names <- unique(Brachiopoda[,'genus'])
-
 
 Trilobita <- genus %>% filter(
   phylum %in% "Arthropoda") %>%
@@ -233,14 +217,6 @@ Trilobita <- genus %>% filter(
   # filter(!order %in% "Agnostida")
 
 Trilobita.names <- unique(Trilobita[,'genus'])
-
-
-# Ostracoda <- genus %>% filter(
-#   phylum %in% "Arthropoda"
-# ) %>%
-#   filter(class %in% "Ostracoda")
-# Ostracoda.names <- unique(Ostracoda[,'genus'])
-
 
 
 Mollusca <- genus %>% filter(
@@ -281,11 +257,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -364,11 +335,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -391,9 +357,6 @@ for (i in 1:100){
     
     
     
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Echino")
     )
@@ -441,11 +404,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -516,11 +474,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -542,10 +495,6 @@ for (i in 1:100){
     summary(cast.gen.cov$cov)
     
     
-    
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Bryo")
     )
@@ -594,11 +543,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -669,11 +613,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -694,11 +633,6 @@ for (i in 1:100){
     
     summary(cast.gen.cov$cov)
     
-    
-    
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Pori")
     )
@@ -746,11 +680,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -821,11 +750,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -846,11 +770,6 @@ for (i in 1:100){
     
     summary(cast.gen.cov$cov)
     
-    
-    
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Coral")
     )
@@ -898,11 +817,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -973,11 +887,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -999,10 +908,6 @@ for (i in 1:100){
     summary(cast.gen.cov$cov)
     
     
-    
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Trilo")
     )
@@ -1050,11 +955,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -1125,11 +1025,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -1150,11 +1045,6 @@ for (i in 1:100){
     
     summary(cast.gen.cov$cov)
     
-    
-    
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Brachio")
     )
@@ -1202,11 +1092,6 @@ for (i in 1:100){
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
     ## in the following step, we create an observation/non-observation matrix
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -1277,11 +1162,6 @@ for (i in 1:100){
     genus.age$SS <- factor(genus.age$SS,
                            levels = c("C3","C4","Tr", "Fl","Dp","Dw","Sa","Ka","Hi","Si1","Si2"))
     
-    # melt_genus <- melt(genus.age, id=c("genus", "SS"), na.rm = TRUE)
-    # melt_genus <- na.omit(melt_genus)
-    # cast_genus <- cast(melt_genus, genus~SS, length)
-    # cast_genus <- as.data.frame(cast_genus)
-    # names(cast_genus)[names(cast_genus) == "genus"] <- "genus.name"
     genus.age <- genus.age[!is.na(genus.age$SS),]
     cast_genus <- dcast(genus.age, genus~SS, length)
     cast_genus <- as.data.frame(cast_genus)
@@ -1302,11 +1182,6 @@ for (i in 1:100){
     
     summary(cast.gen.cov$cov)
     
-    
-    
-    # inp1 <- cast.gen.cov %>% filter(
-    #   cov %in% c("attached")
-    # )
     inp1 <- cast.gen.cov %>% filter(
       cov %in% c("Mollusc")
     )
@@ -2265,10 +2140,6 @@ lines(Stagebase-0.6, Orig_rate.median.Molluscs[1:7], col = "deeppink", type = "b
 arrows(x0=Stagebase-0.6, y0=Orig_rate_CIl.median.Molluscs, x1=Stagebase-0.6, y1=Orig_rate_CIu.median.Molluscs,length=0.02, lwd = 1.2, angle = 90, code = 3, lty=1, col = "deeppink")
 
 
-# lines(Stagebase, Orig_rate_CIl.median.Echinos[1:7], col = "grey65")
-# lines(Stagebase, Orig_rate_CIu.median.Echinos[1:7], col = "grey65")
-
-
 legend("topright",
        c("Echinodermata","Bryozoa","Porifera",
          #"Corals",
@@ -2279,11 +2150,6 @@ legend("topright",
        col = c("black", "orange", "skyblue",
                #"seagreen3",
                "yellow", "midnightblue", "deeppink"))
-# legend("topright",
-#        inset=0.05,
-#        box.lty=0,
-#        text.font=2,
-#        legend = "Echinodermata")
 
 # axis(1, col = 'grey75', line = 0.5, at = seq(445,485,10) )
 axis(2, col = 'grey75', line = -0.2, at = seq(0, 0.8, 0.1))
